@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.calorie";
+option java_outer_classname = "CalorieProto";
+
+package calorie;
+
+// Basic calorie calculation service (Service 1)
+service CalorieService {
+  // Calculate daily calorie needs
+  rpc CalculateDailyCalories (UserInfo) returns (CalorieResult) {}
+}
+
+// Dining out calorie estimation service (Service 2)
+service DiningCalorieService {
+  // Bidirectional streaming for real-time food item calorie lookup
+  rpc StreamFoodCalories (stream FoodItem) returns (stream FoodCalorieInfo) {}
+  
+  // Client streaming for total calorie calculation
+  rpc CalculateTotalCalories (stream FoodItem) returns (TotalCalorieResult) {}
+}
+
+// Workout recommendation service (Service 3)
+service WorkoutRecommendationService {
+  // Get personalized workout recommendations
+  rpc GetWorkoutRecommendations (WorkoutRequest) returns (stream WorkoutRecommendation) {}
+}
+
+// User information for basic calorie calculation
+message UserInfo {
+  int32 age = 1;
+  string gender = 2;  // "MALE" or "FEMALE"
+  double weight = 3;  // in kg
+  double height = 4;  // in cm
+  string activity_level = 5;  // "SEDENTARY", "LIGHT", "MODERATE", "VERY_ACTIVE", "EXTRA_ACTIVE"
+}
+
+// Result of basic calorie calculation
+message CalorieResult {
+  double bmr = 1;  // Basal Metabolic Rate
+  double tdee = 2;  // Total Daily Energy Expenditure
+  double weight_loss_calories = 3;  // Calories for weight loss
+  double weight_gain_calories = 4;  // Calories for weight gain
+}
+
+// Food item information
+message FoodItem {
+  string name = 1;
+  string restaurant = 2;  // Optional: restaurant name
+  int32 quantity = 3;     // Optional: number of servings
+}
+
+// Food calorie information response
+message FoodCalorieInfo {
+  string name = 1;
+  int32 calories = 2;
+  string message = 3;  // Additional information or error message
+}
+
+// Total calorie calculation result
+message TotalCalorieResult {
+  int32 total_calories = 1;
+  int32 item_count = 2;
+  string message = 3;  // Summary or additional information
+}
+
+// Workout request information
+message WorkoutRequest {
+  string target_area = 1;  // "UPPER_BODY", "LOWER_BODY", "CORE"
+  string fitness_level = 2;  // "BEGINNER", "INTERMEDIATE", "ADVANCED"
+}
+
+// Workout recommendation response
+message WorkoutRecommendation {
+  string exercise_name = 1;
+  int32 sets = 2;
+  int32 reps = 3;
+  string equipment = 4;
+  string description = 5;
+  string tips = 6;
+} 
