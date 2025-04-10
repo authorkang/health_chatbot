@@ -1,0 +1,40 @@
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Initializing workout database...
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Initializing workout database...
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Added chest workouts to database
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Added leg workouts to database
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Added back workouts to database
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Added core workouts to database
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Workout database initialized successfully
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Starting server...
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Creating server instance on port 50053
+[2025-04-09 13:06:39] WorkoutRecommendationServer: Server instance created successfully
+[2025-04-09 13:06:40] WorkoutRecommendationServer: Started on port 50053
+[2025-04-09 13:06:40] WorkoutRecommendationServer: Server configuration: ServerImpl{logId=2, transportServer=NettyServer{logId=1, addresses=[0.0.0.0/0.0.0.0:50053]}}
+[2025-04-09 13:06:40] WorkoutRecommendationServer: Waiting for termination...
+[2025-04-09 13:06:59] WorkoutRecommendationServer: Received request - Target Area: lower_body, Fitness Level: INTERMEDIATE
+[2025-04-09 13:06:59] WorkoutRecommendationServer: Recommending - Exercise: Jump Squats, Sets: 4, Reps: 15, Level: INTERMEDIATE
+[2025-04-09 13:06:59] WorkoutRecommendationServer: Successfully sent recommendations for target area: lower_body, level: INTERMEDIATE
+[2025-04-09 13:06:59] WorkoutRecommendationServer: Request completed successfully
+[2025-04-09 13:07:06] WorkoutRecommendationServer: Received request - Target Area: lower_body, Fitness Level: ADVANCED
+[2025-04-09 13:07:06] WorkoutRecommendationServer: Recommending - Exercise: Pistol Squats, Sets: 5, Reps: 8, Level: ADVANCED
+[2025-04-09 13:07:06] WorkoutRecommendationServer: Successfully sent recommendations for target area: lower_body, level: ADVANCED
+[2025-04-09 13:07:06] WorkoutRecommendationServer: Request completed successfully
+[2025-04-09 13:07:11] WorkoutRecommendationServer: Received request - Target Area: core, Fitness Level: BEGINNER
+[2025-04-09 13:07:11] WorkoutRecommendationServer: Recommending - Exercise: Plank, Sets: 3, Reps: 30, Level: BEGINNER
+[2025-04-09 13:07:11] WorkoutRecommendationServer: Successfully sent recommendations for target area: core, level: BEGINNER
+[2025-04-09 13:07:11] WorkoutRecommendationServer: Request completed successfully
+[2025-04-09 13:07:17] WorkoutRecommendationServer: Received request - Target Area: core, Fitness Level: INTERMEDIATE
+[2025-04-09 13:07:17] WorkoutRecommendationServer: Recommending - Exercise: Russian Twists, Sets: 4, Reps: 20, Level: INTERMEDIATE
+[2025-04-09 13:07:17] WorkoutRecommendationServer: Successfully sent recommendations for target area: core, level: INTERMEDIATE
+[2025-04-09 13:07:17] WorkoutRecommendationServer: Request completed successfully
+[2025-04-09 13:07:34] Calorie Server started on port 50052
+[2025-04-09 13:07:52] Received calorie calculation request - Age: 10, Weight: 60.0, Height: 170.0, Gender: FEMALE, Activity: LIGHT
+[2025-04-09 13:07:52] Calculated BMR: 1451.5
+[2025-04-09 13:07:52] Activity Factor: 1.375
+[2025-04-09 13:07:52] Calculated TDEE: 1995.8125
+[2025-04-09 13:07:52] Calculation completed - BMR: 1451.5, TDEE: 1995.8, Weight Loss Calories: 1495.8, Weight Gain Calories: 2495.8
+[2025-04-09 13:08:21] Received calorie calculation request - Age: 40, Weight: 80.0, Height: 190.0, Gender: MALE, Activity: VERY_ACTIVE
+[2025-04-09 13:08:21] Calculated BMR: 1792.5
+[2025-04-09 13:08:21] Activity Factor: 1.725
+[2025-04-09 13:08:21] Calculated TDEE: 3092.0625
+[2025-04-09 13:08:21] Calculation completed - BMR: 1792.5, TDEE: 3092.1, Weight Loss Calories: 2592.1, Weight Gain Calories: 3592.1

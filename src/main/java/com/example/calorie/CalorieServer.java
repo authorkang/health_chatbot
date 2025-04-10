@@ -10,7 +10,6 @@ import com.example.calorie.CalorieResult;
 import com.example.calorie.config.ApiKeyConfig;
 import io.grpc.Context;
 import io.grpc.Metadata;
-import com.example.calorie.interceptor.ApiKeyServerInterceptor;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
