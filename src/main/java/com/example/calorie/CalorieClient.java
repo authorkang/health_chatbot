@@ -2,6 +2,7 @@ package com.example.calorie;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import com.example.calorie.interceptor.ApiKeyInterceptor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -18,7 +19,8 @@ public class CalorieClient {
         this.channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
-        this.blockingStub = CalorieServiceGrpc.newBlockingStub(channel);
+        this.blockingStub = CalorieServiceGrpc.newBlockingStub(channel)
+                .withInterceptors(new ApiKeyInterceptor());
         logger.info("Client initialized with host: " + host + ", port: " + port);
     }
 

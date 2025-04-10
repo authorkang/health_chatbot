@@ -7,6 +7,10 @@ import io.grpc.Status;
 import com.example.calorie.CalorieServiceGrpc.CalorieServiceImplBase;
 import com.example.calorie.UserInfo;
 import com.example.calorie.CalorieResult;
+import com.example.calorie.config.ApiKeyConfig;
+import io.grpc.Context;
+import io.grpc.Metadata;
+import com.example.calorie.interceptor.ApiKeyServerInterceptor;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +36,6 @@ public class CalorieServer {
         server.start();
         logger.info("Calorie Server started, listening on port " + port);
         logger.info("Server configuration: " + server.toString());
-
-        // 종료 훅 제거 - 서버가 계속 실행되도록 함
     }
 
     public void stop() throws InterruptedException {
