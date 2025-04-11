@@ -25,6 +25,7 @@ public class CalorieServiceGUI extends JFrame {
     private JButton serverButton;
     private JButton clientButton;
     private JButton submitButton;
+    private JButton backToMainButton;
     private CalorieServer server;
     private CalorieClient client;
     private boolean isServerRunning = false;
@@ -50,8 +51,10 @@ public class CalorieServiceGUI extends JFrame {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         serverButton = new JButton("Start Server");
         clientButton = new JButton("Start Client");
+        backToMainButton = new JButton("Back to Main");
         controlPanel.add(serverButton);
         controlPanel.add(clientButton);
+        controlPanel.add(backToMainButton);
         add(controlPanel, BorderLayout.NORTH);
 
         // 중앙 패널 (입력/출력)
@@ -175,6 +178,16 @@ public class CalorieServiceGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 submitRequest();
+            }
+        });
+
+        backToMainButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                SwingUtilities.invokeLater(() -> {
+                    new MainGUI().setVisible(true);
+                });
             }
         });
     }
