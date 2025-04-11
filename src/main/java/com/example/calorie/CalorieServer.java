@@ -8,7 +8,6 @@ import com.example.calorie.CalorieServiceGrpc.CalorieServiceImplBase;
 import com.example.calorie.UserInfo;
 import com.example.calorie.CalorieResult;
 import com.example.calorie.config.ApiKeyConfig;
-import com.example.calorie.util.SimpleLogger;
 import io.grpc.Context;
 import io.grpc.Metadata;
 
@@ -34,17 +33,14 @@ public class CalorieServer {
 
     public void start() throws IOException {
         server.start();
-        SimpleLogger.log("Calorie Server started on port " + port);
         logger.info("Calorie Server started, listening on port " + port);
         logger.info("Server configuration: " + server.toString());
     }
 
     public void stop() throws InterruptedException {
         if (server != null) {
-            SimpleLogger.log("Stopping Calorie Server...");
             logger.info("Stopping server...");
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
-            SimpleLogger.log("Calorie Server stopped");
             logger.info("Server stopped");
         }
     }
@@ -53,9 +49,6 @@ public class CalorieServer {
         @Override
         public void calculateDailyCalories(UserInfo request, StreamObserver<CalorieResult> responseObserver) {
             try {
-                SimpleLogger.log(String.format("Received calorie calculation request - Age: %d, Weight: %.1f, Height: %.1f, Gender: %s, Activity: %s",
-                    request.getAge(), request.getWeight(), request.getHeight(), request.getGender(), request.getActivityLevel()));
-
                 // Input validation
                 if (request.getAge() <= 0) {
                     responseObserver.onError(Status.INVALID_ARGUMENT
@@ -84,15 +77,12 @@ public class CalorieServer {
 
                 // BMR 계산
                 double bmr = calculateBMR(request);
-                SimpleLogger.log("Calculated BMR: " + bmr);
                 
                 // 활동 계수 설정
                 double activityFactor = getActivityMultiplier(request.getActivityLevel());
-                SimpleLogger.log("Activity Factor: " + activityFactor);
                 
                 // TDEE 계산
                 double tdee = bmr * activityFactor;
-                SimpleLogger.log("Calculated TDEE: " + tdee);
                 
                 // Calculate calories for weight loss/gain
                 double weightLossCalories = tdee - 500; // Reduce by 500 calories
@@ -106,14 +96,10 @@ public class CalorieServer {
                     .setWeightGainCalories(weightGainCalories)
                     .build();
 
-                SimpleLogger.log(String.format("Calculation completed - BMR: %.1f, TDEE: %.1f, Weight Loss Calories: %.1f, Weight Gain Calories: %.1f",
-                    bmr, tdee, weightLossCalories, weightGainCalories));
-
                 responseObserver.onNext(result);
                 responseObserver.onCompleted();
 
             } catch (Exception e) {
-                SimpleLogger.log("Error calculating calories: " + e.getMessage());
                 logger.severe("Error calculating calories: " + e.getMessage());
                 responseObserver.onError(Status.INTERNAL
                         .withDescription("Error calculating calories: " + e.getMessage())

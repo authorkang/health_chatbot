@@ -2,7 +2,6 @@ package com.example.calorie;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import com.example.calorie.interceptor.ApiKeyInterceptor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -19,8 +18,7 @@ public class CalorieClient {
         this.channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
-        this.blockingStub = CalorieServiceGrpc.newBlockingStub(channel)
-                .withInterceptors(new ApiKeyInterceptor());
+        this.blockingStub = CalorieServiceGrpc.newBlockingStub(channel);
         logger.info("Client initialized with host: " + host + ", port: " + port);
     }
 
@@ -28,7 +26,7 @@ public class CalorieClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    public void calculateDailyCalories(int age, String gender, double weight, double height, String activityLevel) {
+    public String calculateDailyCalories(int age, String gender, double weight, double height, String activityLevel) {
         try {
             UserInfo request = UserInfo.newBuilder()
                 .setAge(age)
@@ -40,15 +38,18 @@ public class CalorieClient {
 
             CalorieResult response = blockingStub.calculateDailyCalories(request);
 
-            System.out.println("\nCalculation Results:");
-            System.out.println("Basal Metabolic Rate (BMR): " + response.getBmr() + " calories");
-            System.out.println("Total Daily Energy Expenditure (TDEE): " + response.getTdee() + " calories");
-            System.out.println("Calories for Weight Loss: " + response.getWeightLossCalories() + " calories");
-            System.out.println("Calories for Weight Gain: " + response.getWeightGainCalories() + " calories");
+            StringBuilder result = new StringBuilder();
+            result.append("\nCalculation Results:\n");
+            result.append("Basal Metabolic Rate (BMR): ").append(response.getBmr()).append(" calories\n");
+            result.append("Total Daily Energy Expenditure (TDEE): ").append(response.getTdee()).append(" calories\n");
+            result.append("Calories for Weight Loss: ").append(response.getWeightLossCalories()).append(" calories\n");
+            result.append("Calories for Weight Gain: ").append(response.getWeightGainCalories()).append(" calories\n");
+
+            return result.toString();
 
         } catch (Exception e) {
             logger.severe("Error calculating calories: " + e.getMessage());
-            System.err.println("Error occurred: " + e.getMessage());
+            return "Error occurred: " + e.getMessage();
         }
     }
 
@@ -97,7 +98,8 @@ public class CalorieClient {
                 default: activityLevel = "MODERATE"; break;
             }
             
-            client.calculateDailyCalories(age, gender, weight, height, activityLevel);
+            String result = client.calculateDailyCalories(age, gender, weight, height, activityLevel);
+            System.out.println(result);
             
             scanner.close();
         } finally {
