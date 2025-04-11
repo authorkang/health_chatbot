@@ -46,3 +46,24 @@ Calories for Weight Gain: 2501.0 calories
 [2025-04-09 15:22:49] Total workout recommendations: 3 for CORE at ADVANCED level
 [2025-04-09 15:22:49] Total workout recommendations: 3 for CORE at ADVANCED level
 [2025-04-09 15:22:49] Total workout recommendations: 3 for CORE at ADVANCED level
+[2025-04-09 15:30:22] Server started successfully on port 50052
+[2025-04-09 15:30:23] Client initialized successfully
+[2025-04-09 15:30:31] Calorie calculation - Age: 23, Gender: MALE, Weight: 70.0, Height: 173.0, Activity: SEDENTARY, Result: 
+Calculation Results:
+Basal Metabolic Rate (BMR): 1671.25 calories
+Total Daily Energy Expenditure (TDEE): 2005.5 calories
+Calories for Weight Loss: 1505.5 calories
+Calories for Weight Gain: 2505.5 calories
+
+[2025-04-09 15:32:11] Server started successfully on port 50052
+[2025-04-09 15:32:12] Client initialized successfully
+[2025-04-09 15:32:29] Calorie calculation - Age: 20, Gender: MALE, Weight: 70.0, Height: 173.0, Activity: SEDENTARY, Result: 
+Calculation Results:
+Basal Metabolic Rate (BMR): 1686.25 calories
+Total Daily Energy Expenditure (TDEE): 2023.5 calories
+Calories for Weight Loss: 1523.5 calories
+Calories for Weight Gain: 2523.5 calories
+
+[2025-04-09 15:32:37] Gender must be either MALE or FEMALE
+[2025-04-09 15:34:57] Server started successfully on port 50052
+[2025-04-09 15:34:58] Client initialized successfully
