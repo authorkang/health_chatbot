@@ -30,6 +30,14 @@ public class DiningCalorieClient {
         asyncStub = DiningCalorieServiceGrpc.newStub(channel);
     }
 
+    /**
+     * Get the async stub for gRPC communication
+     * @return The async stub
+     */
+    public DiningCalorieServiceGrpc.DiningCalorieServiceStub getAsyncStub() {
+        return asyncStub;
+    }
+
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }

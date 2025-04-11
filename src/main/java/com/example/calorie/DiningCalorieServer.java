@@ -17,6 +17,7 @@ public class DiningCalorieServer {
     private static final Logger logger = Logger.getLogger(DiningCalorieServer.class.getName());
 
     private Server server;
+    private final int port;
     private static final Map<String, Integer> FOOD_CALORIES = new HashMap<>();
 
     static {
@@ -33,8 +34,19 @@ public class DiningCalorieServer {
         FOOD_CALORIES.put("bibimbap", 550);
     }
 
-    private void start() throws IOException {
-        int port = 50051;
+    /**
+     * 서버 생성자
+     * @param port 서버가 사용할 포트 번호
+     */
+    public DiningCalorieServer(int port) {
+        this.port = port;
+    }
+
+    /**
+     * 서버 시작
+     * @throws IOException 서버 시작 중 발생할 수 있는 예외
+     */
+    public void start() throws IOException {
         server = ServerBuilder.forPort(port)
                 .addService(new DiningCalorieServiceImpl())
                 .build()
@@ -54,7 +66,11 @@ public class DiningCalorieServer {
         });
     }
 
-    private void stop() throws InterruptedException {
+    /**
+     * 서버 중지
+     * @throws InterruptedException 서버 중지 중 발생할 수 있는 예외
+     */
+    public void stop() throws InterruptedException {
         if (server != null) {
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
         }
@@ -70,7 +86,7 @@ public class DiningCalorieServer {
      * Main method to start the server
      */
     public static void main(String[] args) throws IOException, InterruptedException {
-        final DiningCalorieServer server = new DiningCalorieServer();
+        final DiningCalorieServer server = new DiningCalorieServer(50051);
         server.start();
         server.blockUntilShutdown();
     }
