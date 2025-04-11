@@ -9,6 +9,8 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import com.example.calorie.util.SimpleLogger;
 
 /**
  * Workout Recommendation Service GUI
@@ -167,6 +169,9 @@ public class WorkoutRecommendationGUI extends JFrame {
                     isServerRunning = true;
                     serverButton.setText("Stop Server");
                     appendLog("Server started successfully on port " + PORT);
+                    
+                    // 서버가 백그라운드에서 실행되도록 설정
+                    // blockUntilShutdown()을 호출하지 않음
                 } catch (Exception ex) {
                     appendLog("Error starting server: " + ex.getMessage());
                 }
@@ -223,6 +228,7 @@ public class WorkoutRecommendationGUI extends JFrame {
             // 운동 추천 요청
             StringBuilder resultBuilder = new StringBuilder();
             AtomicBoolean isFirstRecommendation = new AtomicBoolean(true);
+            final AtomicInteger recommendationCount = new AtomicInteger(0);
             
             client.getWorkoutRecommendationsAsync(targetArea, fitnessLevel, recommendation -> {
                 if (isFirstRecommendation.get()) {
@@ -239,10 +245,24 @@ public class WorkoutRecommendationGUI extends JFrame {
                 resultBuilder.append("Tips: ").append(recommendation.getTips()).append("\n");
                 resultBuilder.append("-------------------\n");
                 
+                // 각 운동 추천을 로그에 기록
+                String exerciseLogMessage = String.format("Workout recommendation - Exercise: %s, Sets: %d, Reps: %d, Equipment: %s",
+                    recommendation.getExerciseName(), recommendation.getSets(), recommendation.getReps(), recommendation.getEquipment());
+                appendLog(exerciseLogMessage);
+                
+                // 추천 카운트 증가
+                recommendationCount.incrementAndGet();
+                
                 // GUI 업데이트는 EDT에서 수행
                 SwingUtilities.invokeLater(() -> {
                     outputArea.setText(resultBuilder.toString());
                     outputArea.setCaretPosition(0);
+                    
+                    // 모든 추천이 로드되었을 때 총 개수를 로그에 기록
+                    if (recommendationCount.get() > 0) {
+                        appendLog(String.format("Total workout recommendations: %d for %s at %s level",
+                            recommendationCount.get(), targetArea, fitnessLevel));
+                    }
                 });
             });
             
@@ -256,24 +276,22 @@ public class WorkoutRecommendationGUI extends JFrame {
      * 로그 메시지 추가
      */
     private void appendLog(String message) {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        logArea.append("[" + timestamp + "] " + message + "\n");
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String logMessage = String.format("[%s] %s", timestamp, message);
+        logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
+        
+        // SimpleLogger를 사용하여 analytics.log에 기록
+        SimpleLogger.log(message);
     }
 
     /**
      * 로그 업데이트 타이머 시작
      */
     private void startLogUpdateTimer() {
-        Timer timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String newLog = logOutputStream.toString();
-                if (!newLog.isEmpty()) {
-                    appendLog(newLog.trim());
-                    logOutputStream.reset();
-                }
-            }
+        Timer timer = new Timer(1000, e -> {
+            // 로그 영역 스크롤을 항상 최하단으로 유지
+            logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();
     }

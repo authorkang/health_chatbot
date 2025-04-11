@@ -12,6 +12,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import io.grpc.stub.StreamObserver;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import com.example.calorie.util.SimpleLogger;
 
 /**
  * Dining Calorie Service GUI Class
@@ -255,6 +258,9 @@ public class DiningCalorieServiceGUI extends JFrame {
             StringBuilder resultBuilder = new StringBuilder();
             final AtomicInteger totalCalories = new AtomicInteger(0);
             boolean hasSelection = false;
+            
+            // 선택된 음식 목록을 저장할 StringBuilder
+            final StringBuilder selectedFoodsBuilder = new StringBuilder();
 
             // Create StreamObserver for handling server responses
             final CountDownLatch finishLatch = new CountDownLatch(1);
@@ -268,6 +274,11 @@ public class DiningCalorieServiceGUI extends JFrame {
                                .append(response.getMessage())
                                .append("\n");
                     totalCalories.addAndGet(response.getCalories());
+                    
+                    // 각 음식의 칼로리 정보를 로그에 기록
+                    String foodLogMessage = String.format("Food calorie - %s: %d kcal, %s", 
+                        response.getName(), response.getCalories(), response.getMessage());
+                    appendLog(foodLogMessage);
                 }
 
                 @Override
@@ -282,6 +293,11 @@ public class DiningCalorieServiceGUI extends JFrame {
                                .append(totalCalories.get())
                                .append(" kcal");
                     outputArea.setText(resultBuilder.toString());
+                    
+                    // 총 칼로리 정보를 로그에 기록
+                    String totalLogMessage = String.format("Total calories calculated: %d kcal", totalCalories.get());
+                    appendLog(totalLogMessage);
+                    
                     finishLatch.countDown();
                 }
             };
@@ -297,6 +313,9 @@ public class DiningCalorieServiceGUI extends JFrame {
                     String foodName = checkBox.getText();
                     int quantity = (Integer) foodSpinners.get(i).getValue();
                     
+                    // 선택된 음식 정보를 StringBuilder에 추가
+                    selectedFoodsBuilder.append(foodName).append("(").append(quantity).append("), ");
+                    
                     // Send food information to server
                     FoodItem foodItem = FoodItem.newBuilder()
                         .setName(foodName.toLowerCase())
@@ -310,6 +329,10 @@ public class DiningCalorieServiceGUI extends JFrame {
                 appendLog("Please select at least one food item");
                 return;
             }
+
+            // 선택된 음식 목록을 로그에 기록
+            String selectedFoods = selectedFoodsBuilder.toString().replaceAll(", $", "");
+            appendLog("Calculating calories for: " + selectedFoods);
 
             // Complete the request
             requestObserver.onCompleted();
@@ -327,8 +350,13 @@ public class DiningCalorieServiceGUI extends JFrame {
      * Append log message
      */
     private void appendLog(String message) {
-        logArea.append("[" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message + "\n");
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String logMessage = String.format("[%s] %s", timestamp, message);
+        logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
+        
+        // SimpleLogger를 사용하여 analytics.log에 기록
+        SimpleLogger.log(message);
     }
 
     /**
@@ -336,11 +364,8 @@ public class DiningCalorieServiceGUI extends JFrame {
      */
     private void startLogUpdateTimer() {
         Timer timer = new Timer(1000, e -> {
-            String newLog = logOutputStream.toString();
-            if (!newLog.isEmpty()) {
-                appendLog(newLog);
-                logOutputStream.reset();
-            }
+            // 로그 영역 스크롤을 항상 최하단으로 유지
+            logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();
     }

@@ -74,6 +74,7 @@ public class WorkoutRecommendationServer {
                 .start();
         logger.info("Workout Recommendation Server started, listening on " + port);
 
+        // 서버가 백그라운드에서 실행되도록 설정
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

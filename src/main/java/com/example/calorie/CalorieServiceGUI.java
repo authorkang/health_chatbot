@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import com.example.calorie.util.SimpleLogger;
 
 /**
  * 칼로리 서비스 GUI 클래스
@@ -258,6 +259,11 @@ public class CalorieServiceGUI extends JFrame {
             String result = client.calculateDailyCalories(age, gender, weight, height, activityLevel);
             outputArea.append(result);
             
+            // 계산 결과를 로그에 기록
+            String logMessage = String.format("Calorie calculation - Age: %d, Gender: %s, Weight: %.1f, Height: %.1f, Activity: %s, Result: %s",
+                age, gender, weight, height, activityLevel, result);
+            appendLog(logMessage);
+            
             // 입력 필드 초기화
             ageField.setText("");
             genderField.setText("");
@@ -273,27 +279,25 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 로그 추가
+     * 로그 메시지를 추가하는 메서드
      */
     private void appendLog(String message) {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        logArea.append("[" + timestamp + "] " + message + "\n");
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String logMessage = String.format("[%s] %s", timestamp, message);
+        logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
+        
+        // SimpleLogger를 사용하여 analytics.log에 기록
+        SimpleLogger.log(message);
     }
 
     /**
      * 로그 업데이트 타이머 시작
      */
     private void startLogUpdateTimer() {
-        Timer timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String logContent = logOutputStream.toString();
-                if (!logContent.isEmpty()) {
-                    appendLog(logContent.trim());
-                    logOutputStream.reset();
-                }
-            }
+        Timer timer = new Timer(1000, e -> {
+            // 로그 영역 스크롤을 항상 최하단으로 유지
+            logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();
     }
