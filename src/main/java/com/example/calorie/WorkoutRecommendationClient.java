@@ -5,6 +5,7 @@ import io.grpc.ManagedChannelBuilder;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 /**
  * Workout Recommendation Service Client
@@ -30,8 +31,9 @@ public class WorkoutRecommendationClient {
      * Get workout recommendations
      * @param targetArea Target area (UPPER_BODY, LOWER_BODY, CORE)
      * @param fitnessLevel Fitness level (BEGINNER, INTERMEDIATE, ADVANCED)
+     * @param callback Callback to handle each recommendation
      */
-    public void getWorkoutRecommendationsAsync(String targetArea, String fitnessLevel) {
+    public void getWorkoutRecommendationsAsync(String targetArea, String fitnessLevel, Consumer<WorkoutRecommendation> callback) {
         logger.info("Requesting workout recommendations for " + targetArea + " at " + fitnessLevel + " level");
         
         WorkoutRequest request = WorkoutRequest.newBuilder()
@@ -50,6 +52,9 @@ public class WorkoutRecommendationClient {
                         logger.info("Description: " + recommendation.getDescription());
                         logger.info("Tips: " + recommendation.getTips());
                         logger.info("-------------------");
+                        
+                        // 콜백 호출
+                        callback.accept(recommendation);
                     });
         } catch (Exception e) {
             logger.warning("Error getting workout recommendations: " + e.getMessage());
@@ -96,7 +101,16 @@ public class WorkoutRecommendationClient {
                 };
 
                 System.out.println("\nConnecting to the workout recommendation service...");
-                client.getWorkoutRecommendationsAsync(targetArea, fitnessLevel);
+                client.getWorkoutRecommendationsAsync(targetArea, fitnessLevel, recommendation -> {
+                    // 콘솔에 출력
+                    System.out.println("Exercise: " + recommendation.getExerciseName());
+                    System.out.println("Sets: " + recommendation.getSets());
+                    System.out.println("Reps: " + recommendation.getReps());
+                    System.out.println("Equipment: " + recommendation.getEquipment());
+                    System.out.println("Description: " + recommendation.getDescription());
+                    System.out.println("Tips: " + recommendation.getTips());
+                    System.out.println("-------------------");
+                });
 
                 // 계속할지 여부 확인
                 System.out.print("\nWould you like to get recommendations for another area or fitness level? (y/n) ");

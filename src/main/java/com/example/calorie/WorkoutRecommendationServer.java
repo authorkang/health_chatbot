@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class WorkoutRecommendationServer {
     private static final Logger logger = Logger.getLogger(WorkoutRecommendationServer.class.getName());
     private Server server;
+    private final int port;
 
     // Workout database (In production, use a proper database)
     private static final Map<String, List<WorkoutData>> WORKOUT_DATABASE = new HashMap<>();
@@ -54,8 +55,19 @@ public class WorkoutRecommendationServer {
         WORKOUT_DATABASE.put("CORE", core);
     }
 
-    private void start() throws IOException {
-        int port = 50053;
+    /**
+     * 생성자 - 포트 번호를 매개변수로 받음
+     * @param port 서버가 사용할 포트 번호
+     */
+    public WorkoutRecommendationServer(int port) {
+        this.port = port;
+    }
+
+    /**
+     * 서버 시작
+     * @throws IOException 서버 시작 중 오류 발생 시
+     */
+    public void start() throws IOException {
         server = ServerBuilder.forPort(port)
                 .addService(new WorkoutRecommendationServiceImpl())
                 .build()
@@ -75,7 +87,11 @@ public class WorkoutRecommendationServer {
         });
     }
 
-    private void stop() throws InterruptedException {
+    /**
+     * 서버 중지
+     * @throws InterruptedException 서버 중지 중 인터럽트 발생 시
+     */
+    public void stop() throws InterruptedException {
         if (server != null) {
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
         }
@@ -157,7 +173,7 @@ public class WorkoutRecommendationServer {
     }
 
     public static void main(String[] args) throws Exception {
-        final WorkoutRecommendationServer server = new WorkoutRecommendationServer();
+        final WorkoutRecommendationServer server = new WorkoutRecommendationServer(50053);
         server.start();
         server.blockUntilShutdown();
     }
