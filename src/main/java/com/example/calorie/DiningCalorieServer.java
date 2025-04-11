@@ -7,16 +7,15 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import com.example.calorie.util.SimpleLogger;
 
 /**
  * Dining Calorie Calculator Server
  * Provides real-time calorie information for various food items
  */
 public class DiningCalorieServer {
-    private static final Logger logger = Logger.getLogger(DiningCalorieServer.class.getName());
-
-    private Server server;
+    private final int port;
+    private final Server server;
     private static final Map<String, Integer> FOOD_CALORIES = new HashMap<>();
 
     static {
@@ -31,37 +30,35 @@ public class DiningCalorieServer {
         FOOD_CALORIES.put("kimchi", 15);
         FOOD_CALORIES.put("ramen", 450);
         FOOD_CALORIES.put("bibimbap", 550);
+        
+        SimpleLogger.log("DiningCalorieServer: Food calorie database initialized with " + FOOD_CALORIES.size() + " items");
     }
 
-    private void start() throws IOException {
-        int port = 50051;
-        server = ServerBuilder.forPort(port)
+    public DiningCalorieServer(int port) {
+        this.port = port;
+        this.server = ServerBuilder.forPort(port)
                 .addService(new DiningCalorieServiceImpl())
-                .build()
-                .start();
-        logger.info("Server started, listening on " + port);
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    DiningCalorieServer.this.stop();
-                } catch (InterruptedException e) {
-                    logger.warning(e.getMessage());
-                }
-                logger.info("Server shut down");
-            }
-        });
+                .build();
+        SimpleLogger.log("DiningCalorieServer: Server instance created on port " + port);
     }
 
-    private void stop() throws InterruptedException {
+    public void start() throws IOException {
+        server.start();
+        SimpleLogger.log("DiningCalorieServer: Server started on port " + port);
+        SimpleLogger.log("DiningCalorieServer: Server configuration - " + server.toString());
+    }
+
+    public void stop() throws InterruptedException {
         if (server != null) {
+            SimpleLogger.log("DiningCalorieServer: Initiating server shutdown...");
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
+            SimpleLogger.log("DiningCalorieServer: Server stopped successfully");
         }
     }
 
     private void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
+            SimpleLogger.log("DiningCalorieServer: Waiting for server termination...");
             server.awaitTermination();
         }
     }
@@ -70,8 +67,21 @@ public class DiningCalorieServer {
      * Main method to start the server
      */
     public static void main(String[] args) throws IOException, InterruptedException {
-        final DiningCalorieServer server = new DiningCalorieServer();
+        SimpleLogger.log("DiningCalorieServer: Starting server initialization...");
+        final DiningCalorieServer server = new DiningCalorieServer(50051);
         server.start();
+        
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    server.stop();
+                } catch (InterruptedException e) {
+                    SimpleLogger.log("DiningCalorieServer: Error during server shutdown - " + e.getMessage());
+                }
+            }
+        });
+        
         server.blockUntilShutdown();
     }
 
@@ -81,18 +91,24 @@ public class DiningCalorieServer {
     static class DiningCalorieServiceImpl extends DiningCalorieServiceGrpc.DiningCalorieServiceImplBase {
         @Override
         public StreamObserver<FoodItem> streamFoodCalories(final StreamObserver<FoodCalorieInfo> responseObserver) {
+            SimpleLogger.log("DiningCalorieServer: New streaming food calories request received");
             return new StreamObserver<FoodItem>() {
-                private int runningTotal = 0;  // Variable to store cumulative total calories
+                private int runningTotal = 0;
 
                 @Override
                 public void onNext(FoodItem foodItem) {
                     String foodName = foodItem.getName().toLowerCase();
                     int quantity = foodItem.getQuantity();
                     
+                    SimpleLogger.log(String.format("DiningCalorieServer: Processing food item - Name: %s, Quantity: %d", foodName, quantity));
+                    
                     if (FOOD_CALORIES.containsKey(foodName)) {
                         int caloriesPerServing = FOOD_CALORIES.get(foodName);
                         int itemCalories = caloriesPerServing * quantity;
-                        runningTotal += itemCalories;  // Calculate cumulative total calories
+                        runningTotal += itemCalories;
+                        
+                        SimpleLogger.log(String.format("DiningCalorieServer: Calculated calories - Food: %s, Calories: %d, Total: %d", 
+                            foodName, itemCalories, runningTotal));
                         
                         FoodCalorieInfo response = FoodCalorieInfo.newBuilder()
                             .setName(foodName)
@@ -102,6 +118,8 @@ public class DiningCalorieServer {
                             .build();
                         responseObserver.onNext(response);
                     } else {
+                        SimpleLogger.log("DiningCalorieServer: Food item not found - " + foodName);
+                        
                         FoodCalorieInfo response = FoodCalorieInfo.newBuilder()
                             .setName(foodName)
                             .setCalories(0)
@@ -113,11 +131,12 @@ public class DiningCalorieServer {
 
                 @Override
                 public void onError(Throwable t) {
-                    logger.warning("Error in stream: " + t.getMessage());
+                    SimpleLogger.log("DiningCalorieServer: Stream error - " + t.getMessage());
                 }
 
                 @Override
                 public void onCompleted() {
+                    SimpleLogger.log("DiningCalorieServer: Stream completed - Total calories: " + runningTotal);
                     responseObserver.onCompleted();
                 }
             };
@@ -125,6 +144,7 @@ public class DiningCalorieServer {
 
         @Override
         public StreamObserver<FoodItem> calculateTotalCalories(final StreamObserver<TotalCalorieResult> responseObserver) {
+            SimpleLogger.log("DiningCalorieServer: New total calories calculation request received");
             return new StreamObserver<FoodItem>() {
                 private int totalCalories = 0;
                 private int itemCount = 0;
@@ -134,23 +154,36 @@ public class DiningCalorieServer {
                     String foodName = foodItem.getName().toLowerCase();
                     int quantity = foodItem.getQuantity();
                     
+                    SimpleLogger.log(String.format("DiningCalorieServer: Processing total calculation - Food: %s, Quantity: %d", 
+                        foodName, quantity));
+                    
                     if (FOOD_CALORIES.containsKey(foodName)) {
-                        totalCalories += FOOD_CALORIES.get(foodName) * quantity;
+                        int caloriesPerServing = FOOD_CALORIES.get(foodName);
+                        int itemCalories = caloriesPerServing * quantity;
+                        totalCalories += itemCalories;
                         itemCount++;
+                        
+                        SimpleLogger.log(String.format("DiningCalorieServer: Added to total - Food: %s, Calories: %d, Total: %d", 
+                            foodName, itemCalories, totalCalories));
+                    } else {
+                        SimpleLogger.log("DiningCalorieServer: Food item not found - " + foodName);
                     }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    logger.warning("Error in stream: " + t.getMessage());
+                    SimpleLogger.log("DiningCalorieServer: Stream error - " + t.getMessage());
                 }
 
                 @Override
                 public void onCompleted() {
+                    String resultMsg = String.format("Total calories for %d items: %d", itemCount, totalCalories);
+                    SimpleLogger.log("DiningCalorieServer: Calculation completed - " + resultMsg);
+                    
                     TotalCalorieResult result = TotalCalorieResult.newBuilder()
                         .setTotalCalories(totalCalories)
                         .setItemCount(itemCount)
-                        .setMessage(String.format("Total calories for %d items: %d", itemCount, totalCalories))
+                        .setMessage(resultMsg)
                         .build();
                     responseObserver.onNext(result);
                     responseObserver.onCompleted();

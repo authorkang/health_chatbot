@@ -79,4 +79,5 @@ message WorkoutRecommendation {
   string equipment = 4;
   string description = 5;
   string tips = 6;
+  string fitness_level = 7;  // "BEGINNER", "INTERMEDIATE", "ADVANCED"
 } 
