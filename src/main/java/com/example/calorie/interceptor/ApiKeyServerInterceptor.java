@@ -4,7 +4,7 @@ import io.grpc.*;
 import com.example.calorie.config.ApiKeyConfig;
 
 /**
- * 서버 측 API 키 인증을 위한 gRPC 인터셉터
+ * gRPC interceptor for server-side API key authentication
  */
 public class ApiKeyServerInterceptor implements ServerInterceptor {
     @Override

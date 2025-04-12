@@ -56,16 +56,16 @@ public class WorkoutRecommendationServer {
     }
 
     /**
-     * 생성자 - 포트 번호를 매개변수로 받음
-     * @param port 서버가 사용할 포트 번호
+     * Constructor – accepts the port number as a parameter
+     * @param port The port number the server will use
      */
     public WorkoutRecommendationServer(int port) {
         this.port = port;
     }
 
     /**
-     * 서버 시작
-     * @throws IOException 서버 시작 중 오류 발생 시
+     * Start the server
+     * @throws IOException If an error occurs while starting the server
      */
     public void start() throws IOException {
         server = ServerBuilder.forPort(port)
@@ -74,7 +74,7 @@ public class WorkoutRecommendationServer {
                 .start();
         logger.info("Workout Recommendation Server started, listening on " + port);
 
-        // 서버가 백그라운드에서 실행되도록 설정
+        // Let the server run in the background
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -89,8 +89,8 @@ public class WorkoutRecommendationServer {
     }
 
     /**
-     * 서버 중지
-     * @throws InterruptedException 서버 중지 중 인터럽트 발생 시
+     * Stop the server
+     * @throws InterruptedException If an interruption occurs while stopping the server
      */
     public void stop() throws InterruptedException {
         if (server != null) {

@@ -75,20 +75,20 @@ public class CalorieServer {
                     return;
                 }
 
-                // BMR 계산
+                // BMR calculation
                 double bmr = calculateBMR(request);
                 
-                // 활동 계수 설정
+                // Set activity factor
                 double activityFactor = getActivityMultiplier(request.getActivityLevel());
                 
-                // TDEE 계산
+                // TDEE calculation
                 double tdee = bmr * activityFactor;
                 
                 // Calculate calories for weight loss/gain
                 double weightLossCalories = tdee - 500; // Reduce by 500 calories
                 double weightGainCalories = tdee + 500; // Increase by 500 calories
 
-                // 응답 생성
+                // Build response
                 CalorieResult result = CalorieResult.newBuilder()
                     .setBmr(bmr)
                     .setTdee(tdee)
@@ -109,10 +109,10 @@ public class CalorieServer {
 
         private double calculateBMR(UserInfo request) {
             if (request.getGender().equalsIgnoreCase("MALE")) {
-                // 남성 BMR 공식
+                // BMR formula for males
                 return (10 * request.getWeight()) + (6.25 * request.getHeight()) - (5 * request.getAge()) + 5;
             } else {
-                // 여성 BMR 공식
+                // BMR formula for females
                 return (10 * request.getWeight()) + (6.25 * request.getHeight()) - (5 * request.getAge()) - 161;
             }
         }
@@ -136,7 +136,7 @@ public class CalorieServer {
     }
 
     public static void main(String[] args) throws Exception {
-        int port = 50052;  // 포트를 50052로 변경
+        int port = 50052;  // Change the port to 50052
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
@@ -144,9 +144,9 @@ public class CalorieServer {
         final CalorieServer server = new CalorieServer(port);
         server.start();
         
-        // 서버가 종료되지 않도록 메인 스레드를 대기 상태로 유지
+        // Keep the main thread alive to prevent server shutdown
         try {
-            // 무한 루프로 서버 실행 유지
+            // Run server in infinite loop
             while (true) {
                 Thread.sleep(1000);
             }
@@ -159,7 +159,7 @@ public class CalorieServer {
 
     private void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
-            // 서버가 종료될 때까지 대기
+            // Wait until server shuts down
             server.awaitTermination();
         }
     }

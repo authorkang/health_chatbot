@@ -53,7 +53,7 @@ public class WorkoutRecommendationClient {
                         logger.info("Tips: " + recommendation.getTips());
                         logger.info("-------------------");
                         
-                        // 콜백 호출
+                        // Invoke callback
                         callback.accept(recommendation);
                     });
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class WorkoutRecommendationClient {
     }
 
     public static void main(String[] args) throws Exception {
-        // 클라이언트 생성
+        // Create client
         WorkoutRecommendationClient client = new WorkoutRecommendationClient("localhost", 50053);
         Scanner scanner = new Scanner(System.in);
 
@@ -71,7 +71,7 @@ public class WorkoutRecommendationClient {
             System.out.println("Welcome to the Gym Workout Recommendation System!");
             
             while (true) {
-                // 목표 부위 선택
+                // Select target area
                 System.out.println("1. Upper Body");
                 System.out.println("2. Lower Body");
                 System.out.println("3. Core");
@@ -85,7 +85,7 @@ public class WorkoutRecommendationClient {
                     default -> throw new IllegalArgumentException("Invalid choice");
                 };
 
-                // 피트니스 레벨 선택
+                // Select fitness level
                 System.out.println("\nPlease select your fitness level:");
                 System.out.println("1. Beginner");
                 System.out.println("2. Intermediate");
@@ -102,7 +102,7 @@ public class WorkoutRecommendationClient {
 
                 System.out.println("\nConnecting to the workout recommendation service...");
                 client.getWorkoutRecommendationsAsync(targetArea, fitnessLevel, recommendation -> {
-                    // 콘솔에 출력
+                    // Print to console
                     System.out.println("Exercise: " + recommendation.getExerciseName());
                     System.out.println("Sets: " + recommendation.getSets());
                     System.out.println("Reps: " + recommendation.getReps());
@@ -112,9 +112,9 @@ public class WorkoutRecommendationClient {
                     System.out.println("-------------------");
                 });
 
-                // 계속할지 여부 확인
+                // Ask if user wants to continue
                 System.out.print("\nWould you like to get recommendations for another area or fitness level? (y/n) ");
-                scanner.nextLine(); // 버퍼 비우기
+                scanner.nextLine(); // Clear buffer
                 String answer = scanner.nextLine();
                 if (!answer.toLowerCase().startsWith("y")) {
                     break;

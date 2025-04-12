@@ -272,7 +272,7 @@ public class DiningCalorieServiceGUI extends JFrame {
             final AtomicInteger totalCalories = new AtomicInteger(0);
             boolean hasSelection = false;
             
-            // 선택된 음식 목록을 저장할 StringBuilder
+            // StringBuilder to store the list of selected food items
             final StringBuilder selectedFoodsBuilder = new StringBuilder();
 
             // Create StreamObserver for handling server responses
@@ -288,7 +288,7 @@ public class DiningCalorieServiceGUI extends JFrame {
                                .append("\n");
                     totalCalories.addAndGet(response.getCalories());
                     
-                    // 각 음식의 칼로리 정보를 로그에 기록
+                    // Log each food's calorie information
                     String foodLogMessage = String.format("Food calorie - %s: %d kcal, %s", 
                         response.getName(), response.getCalories(), response.getMessage());
                     appendLog(foodLogMessage);
@@ -307,7 +307,7 @@ public class DiningCalorieServiceGUI extends JFrame {
                                .append(" kcal");
                     outputArea.setText(resultBuilder.toString());
                     
-                    // 총 칼로리 정보를 로그에 기록
+                    // Log total calorie information
                     String totalLogMessage = String.format("Total calories calculated: %d kcal", totalCalories.get());
                     appendLog(totalLogMessage);
                     
@@ -326,7 +326,7 @@ public class DiningCalorieServiceGUI extends JFrame {
                     String foodName = checkBox.getText();
                     int quantity = (Integer) foodSpinners.get(i).getValue();
                     
-                    // 선택된 음식 정보를 StringBuilder에 추가
+                    // Add selected food information to StringBuilder
                     selectedFoodsBuilder.append(foodName).append("(").append(quantity).append("), ");
                     
                     // Send food information to server
@@ -343,7 +343,7 @@ public class DiningCalorieServiceGUI extends JFrame {
                 return;
             }
 
-            // 선택된 음식 목록을 로그에 기록
+            // Log the selected food list
             String selectedFoods = selectedFoodsBuilder.toString().replaceAll(", $", "");
             appendLog("Calculating calories for: " + selectedFoods);
 
@@ -368,7 +368,7 @@ public class DiningCalorieServiceGUI extends JFrame {
         logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
         
-        // SimpleLogger를 사용하여 analytics.log에 기록
+        // Record to analytics.log using SimpleLogger
         SimpleLogger.log(message);
     }
 
@@ -377,7 +377,7 @@ public class DiningCalorieServiceGUI extends JFrame {
      */
     private void startLogUpdateTimer() {
         Timer timer = new Timer(1000, e -> {
-            // 로그 영역 스크롤을 항상 최하단으로 유지
+            // Always keep log area scrolled to bottom
             logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();

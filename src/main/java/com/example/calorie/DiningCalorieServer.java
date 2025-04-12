@@ -35,16 +35,16 @@ public class DiningCalorieServer {
     }
 
     /**
-     * 서버 생성자
-     * @param port 서버가 사용할 포트 번호
+     * Constructor for the server
+     * @param port Port number used by the server
      */
     public DiningCalorieServer(int port) {
         this.port = port;
     }
 
     /**
-     * 서버 시작
-     * @throws IOException 서버 시작 중 발생할 수 있는 예외
+     * Starts the server
+     * @throws IOException Exception that can occur while starting the server
      */
     public void start() throws IOException {
         server = ServerBuilder.forPort(port)
@@ -67,8 +67,8 @@ public class DiningCalorieServer {
     }
 
     /**
-     * 서버 중지
-     * @throws InterruptedException 서버 중지 중 발생할 수 있는 예외
+     * Stops the server
+     * @throws InterruptedException Exception that can occur while stopping the server
      */
     public void stop() throws InterruptedException {
         if (server != null) {

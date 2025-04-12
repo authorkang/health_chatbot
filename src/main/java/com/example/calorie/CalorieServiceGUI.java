@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter;
 import com.example.calorie.util.SimpleLogger;
 
 /**
- * 칼로리 서비스 GUI 클래스
- * 서버 실행, 클라이언트 실행, 입력/출력, 로그 표시 기능을 제공합니다.
+ * GUI class for Calorie Service
+ * Provides functionality to run server, run client, handle input/output, and display logs.
  */
 public class CalorieServiceGUI extends JFrame {
     private JTextArea outputArea;
@@ -36,18 +36,18 @@ public class CalorieServiceGUI extends JFrame {
     private static final int FIELD_WIDTH = 15;
 
     public CalorieServiceGUI() {
-        // 로그 캡처를 위한 설정
+        // Setup for log capturing
         logOutputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(logOutputStream));
 
-        // GUI 초기화
+        // Initialize GUI
         setTitle("Calorie Service GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 500);
         setLayout(new BorderLayout(5, 5));
 
-        // 상단 패널 (서버/클라이언트 컨트롤)
+        // Top panel (Server/Client controls)
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         serverButton = new JButton("Start Server");
         clientButton = new JButton("Start Client");
@@ -57,18 +57,18 @@ public class CalorieServiceGUI extends JFrame {
         controlPanel.add(backToMainButton);
         add(controlPanel, BorderLayout.NORTH);
 
-        // 중앙 패널 (입력/출력)
+        // Center panel (Input/Output)
         JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         
-        // 입력 영역 (왼쪽)
+        // Input area (Left side)
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
         
-        // 라벨과 필드를 세로로 정렬
+        // Arrange labels and fields vertically
         gbc.gridx = 0;
         gbc.gridy = 0;
         inputPanel.add(new JLabel("Age:"), gbc);
@@ -118,7 +118,7 @@ public class CalorieServiceGUI extends JFrame {
         submitButton = new JButton("Calculate Calories");
         inputPanel.add(submitButton, gbc);
         
-        // 출력 영역 (오른쪽)
+        // Output area (Right side)
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         outputArea.setLineWrap(true);
@@ -127,14 +127,14 @@ public class CalorieServiceGUI extends JFrame {
         outputScroll.setBorder(BorderFactory.createTitledBorder("Results"));
         outputScroll.setPreferredSize(new Dimension(300, 200));
 
-        // 입력과 출력 패널을 수평으로 배치
+        // Place input and output panels side-by-side
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inputPanel, outputScroll);
         splitPane.setResizeWeight(0.5);
         centerPanel.add(splitPane, BorderLayout.CENTER);
         
         add(centerPanel, BorderLayout.CENTER);
 
-        // 하단 패널 (로그)
+        // Bottom panel (Logs)
         logArea = new JTextArea();
         logArea.setEditable(false);
         logArea.setRows(6);
@@ -142,18 +142,18 @@ public class CalorieServiceGUI extends JFrame {
         logScroll.setBorder(BorderFactory.createTitledBorder("Logs"));
         add(logScroll, BorderLayout.SOUTH);
 
-        // 이벤트 리스너 설정
+        // Set up event listeners
         setupEventListeners();
 
-        // 로그 업데이트 타이머 시작
+        // Start log update timer
         startLogUpdateTimer();
         
-        // 창을 화면 중앙에 배치
+        // Center window on screen
         setLocationRelativeTo(null);
     }
 
     /**
-     * 이벤트 리스너 설정
+     * Set up event listeners
      */
     private void setupEventListeners() {
         serverButton.addActionListener(new ActionListener() {
@@ -193,7 +193,7 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 서버 시작
+     * Start server
      */
     private void startServer() {
         try {
@@ -214,7 +214,7 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 서버 중지
+     * Stop server
      */
     private void stopServer() {
         if (server != null) {
@@ -230,7 +230,7 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 클라이언트 시작
+     * Start client
      */
     private void startClient() {
         try {
@@ -242,7 +242,7 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 요청 제출
+     * Submit request
      */
     private void submitRequest() {
         if (client == null) {
@@ -257,7 +257,7 @@ public class CalorieServiceGUI extends JFrame {
             double height = Double.parseDouble(heightField.getText());
             String activityLevel = (String) activityLevelCombo.getSelectedItem();
 
-            // 입력값 검증
+            // Validate input
             if (age <= 0 || weight <= 0 || height <= 0) {
                 appendLog("Please enter valid positive numbers for age, weight, and height");
                 return;
@@ -268,16 +268,16 @@ public class CalorieServiceGUI extends JFrame {
                 return;
             }
 
-            // 클라이언트 요청 실행
+            // Execute client request
             String result = client.calculateDailyCalories(age, gender, weight, height, activityLevel);
             outputArea.append(result);
             
-            // 계산 결과를 로그에 기록
+            // Log calculation result
             String logMessage = String.format("Calorie calculation - Age: %d, Gender: %s, Weight: %.1f, Height: %.1f, Activity: %s, Result: %s",
                 age, gender, weight, height, activityLevel, result);
             appendLog(logMessage);
             
-            // 입력 필드 초기화
+            // Clear input fields
             ageField.setText("");
             genderField.setText("");
             weightField.setText("");
@@ -292,7 +292,7 @@ public class CalorieServiceGUI extends JFrame {
     }
 
     /**
-     * 로그 메시지를 추가하는 메서드
+     * Method to append log messages
      */
     private void appendLog(String message) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -300,16 +300,16 @@ public class CalorieServiceGUI extends JFrame {
         logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
         
-        // SimpleLogger를 사용하여 analytics.log에 기록
+        // Use SimpleLogger to write to analytics.log
         SimpleLogger.log(message);
     }
 
     /**
-     * 로그 업데이트 타이머 시작
+     * Start log update timer
      */
     private void startLogUpdateTimer() {
         Timer timer = new Timer(1000, e -> {
-            // 로그 영역 스크롤을 항상 최하단으로 유지
+            // Always keep log view scrolled to the bottom
             logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();

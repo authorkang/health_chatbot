@@ -34,18 +34,18 @@ public class WorkoutRecommendationGUI extends JFrame {
     private static final String HOST = "localhost";
 
     public WorkoutRecommendationGUI() {
-        // 로그 캡처를 위한 설정
+        // Setup for capturing logs
         logOutputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(logOutputStream));
 
-        // GUI 초기화
+        // Initialize GUI
         setTitle("Workout Recommendation Service GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 500);
         setLayout(new BorderLayout(5, 5));
 
-        // 상단 패널 (서버/클라이언트 컨트롤)
+        // Top panel (server/client control)
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         serverButton = new JButton("Start Server");
         clientButton = new JButton("Start Client");
@@ -55,18 +55,18 @@ public class WorkoutRecommendationGUI extends JFrame {
         controlPanel.add(backToMainButton);
         add(controlPanel, BorderLayout.NORTH);
 
-        // 중앙 패널 (입력/출력)
+        // Center panel (input/output)
         JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         
-        // 입력 영역 (왼쪽)
+        // Input area (left)
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
         
-        // 운동 부위 선택
+        // Select target workout area
         gbc.gridx = 0;
         gbc.gridy = 0;
         inputPanel.add(new JLabel("Target Area:"), gbc);
@@ -77,7 +77,7 @@ public class WorkoutRecommendationGUI extends JFrame {
         });
         inputPanel.add(targetAreaCombo, gbc);
         
-        // 피트니스 레벨 선택
+        // Select fitness level
         gbc.gridx = 0;
         gbc.gridy = 1;
         inputPanel.add(new JLabel("Fitness Level:"), gbc);
@@ -88,7 +88,7 @@ public class WorkoutRecommendationGUI extends JFrame {
         });
         inputPanel.add(fitnessLevelCombo, gbc);
         
-        // 제출 버튼
+        // Submit button
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -96,7 +96,7 @@ public class WorkoutRecommendationGUI extends JFrame {
         submitButton = new JButton("Get Workout Recommendations");
         inputPanel.add(submitButton, gbc);
         
-        // 출력 영역 (오른쪽)
+        // Output area (right)
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         outputArea.setLineWrap(true);
@@ -105,14 +105,14 @@ public class WorkoutRecommendationGUI extends JFrame {
         outputScroll.setBorder(BorderFactory.createTitledBorder("Results"));
         outputScroll.setPreferredSize(new Dimension(300, 200));
 
-        // 입력과 출력 패널을 수평으로 배치
+        // Arrange input and output panels side by side
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inputPanel, outputScroll);
         splitPane.setResizeWeight(0.5);
         centerPanel.add(splitPane, BorderLayout.CENTER);
         
         add(centerPanel, BorderLayout.CENTER);
 
-        // 하단 패널 (로그)
+        // Bottom panel (logs)
         logArea = new JTextArea();
         logArea.setEditable(false);
         logArea.setRows(6);
@@ -120,18 +120,18 @@ public class WorkoutRecommendationGUI extends JFrame {
         logScroll.setBorder(BorderFactory.createTitledBorder("Logs"));
         add(logScroll, BorderLayout.SOUTH);
 
-        // 이벤트 리스너 설정
+        // Set up event listeners
         setupEventListeners();
 
-        // 로그 업데이트 타이머 시작
+        // Start log update timer
         startLogUpdateTimer();
         
-        // 창을 화면 중앙에 배치
+        // Center the window on the screen
         setLocationRelativeTo(null);
     }
 
     /**
-     * 이벤트 리스너 설정
+     * Set up event listeners
      */
     private void setupEventListeners() {
         serverButton.addActionListener(new ActionListener() {
@@ -171,7 +171,7 @@ public class WorkoutRecommendationGUI extends JFrame {
     }
 
     /**
-     * 서버 시작
+     * Start server
      */
     private void startServer() {
         try {
@@ -183,8 +183,8 @@ public class WorkoutRecommendationGUI extends JFrame {
                     serverButton.setText("Stop Server");
                     appendLog("Server started successfully on port " + PORT);
                     
-                    // 서버가 백그라운드에서 실행되도록 설정
-                    // blockUntilShutdown()을 호출하지 않음
+                    // Let the server run in background
+                    // blockUntilShutdown() not called here
                 } catch (Exception ex) {
                     appendLog("Error starting server: " + ex.getMessage());
                 }
@@ -195,7 +195,7 @@ public class WorkoutRecommendationGUI extends JFrame {
     }
 
     /**
-     * 서버 중지
+     * Stop server
      */
     private void stopServer() {
         if (server != null) {
@@ -211,7 +211,7 @@ public class WorkoutRecommendationGUI extends JFrame {
     }
 
     /**
-     * 클라이언트 시작
+     * Start client
      */
     private void startClient() {
         try {
@@ -223,7 +223,7 @@ public class WorkoutRecommendationGUI extends JFrame {
     }
 
     /**
-     * 운동 추천 요청 제출
+     * Submit workout recommendation request
      */
     private void submitRequest() {
         if (client == null) {
@@ -235,10 +235,10 @@ public class WorkoutRecommendationGUI extends JFrame {
             String targetArea = (String) targetAreaCombo.getSelectedItem();
             String fitnessLevel = (String) fitnessLevelCombo.getSelectedItem();
 
-            // 결과 영역 초기화
+            // Clear the output area
             outputArea.setText("");
             
-            // 운동 추천 요청
+            // Request workout recommendations
             StringBuilder resultBuilder = new StringBuilder();
             AtomicBoolean isFirstRecommendation = new AtomicBoolean(true);
             final AtomicInteger recommendationCount = new AtomicInteger(0);
@@ -258,20 +258,20 @@ public class WorkoutRecommendationGUI extends JFrame {
                 resultBuilder.append("Tips: ").append(recommendation.getTips()).append("\n");
                 resultBuilder.append("-------------------\n");
                 
-                // 각 운동 추천을 로그에 기록
+                // Log each workout recommendation
                 String exerciseLogMessage = String.format("Workout recommendation - Exercise: %s, Sets: %d, Reps: %d, Equipment: %s",
                     recommendation.getExerciseName(), recommendation.getSets(), recommendation.getReps(), recommendation.getEquipment());
                 appendLog(exerciseLogMessage);
                 
-                // 추천 카운트 증가
+                // Increase recommendation count
                 recommendationCount.incrementAndGet();
                 
-                // GUI 업데이트는 EDT에서 수행
+                // GUI update on EDT
                 SwingUtilities.invokeLater(() -> {
                     outputArea.setText(resultBuilder.toString());
                     outputArea.setCaretPosition(0);
                     
-                    // 모든 추천이 로드되었을 때 총 개수를 로그에 기록
+                    // Log total number of recommendations when done
                     if (recommendationCount.get() > 0) {
                         appendLog(String.format("Total workout recommendations: %d for %s at %s level",
                             recommendationCount.get(), targetArea, fitnessLevel));
@@ -286,7 +286,7 @@ public class WorkoutRecommendationGUI extends JFrame {
     }
 
     /**
-     * 로그 메시지 추가
+     * Append log message
      */
     private void appendLog(String message) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -294,16 +294,16 @@ public class WorkoutRecommendationGUI extends JFrame {
         logArea.append(logMessage + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
         
-        // SimpleLogger를 사용하여 analytics.log에 기록
+        // Record to analytics.log using SimpleLogger
         SimpleLogger.log(message);
     }
 
     /**
-     * 로그 업데이트 타이머 시작
+     * Start log update timer
      */
     private void startLogUpdateTimer() {
         Timer timer = new Timer(1000, e -> {
-            // 로그 영역 스크롤을 항상 최하단으로 유지
+            // Keep the log area scrolled to the bottom
             logArea.setCaretPosition(logArea.getDocument().getLength());
         });
         timer.start();
