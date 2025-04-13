@@ -1,0 +1,9 @@
+[2025-04-13 09:32:40] Server started successfully on port 50052
+[2025-04-13 09:32:41] Client initialized successfully
+[2025-04-13 09:32:51] Calorie calculation - Age: 20, Gender: MALE, Weight: 70.0, Height: 170.0, Activity: LIGHT, Result: 
+Calculation Results:
+Basal Metabolic Rate (BMR): 1667.5 calories
+Total Daily Energy Expenditure (TDEE): 2292.8125 calories
+Calories for Weight Loss: 1792.8125 calories
+Calories for Weight Gain: 2792.8125 calories
+
