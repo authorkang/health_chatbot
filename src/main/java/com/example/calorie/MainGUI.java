@@ -17,7 +17,7 @@ public class MainGUI extends JFrame {
 
     public MainGUI() {
         // Basic window settings
-        setTitle("Calorie Services");
+        setTitle("Health chatbot");
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -28,7 +28,7 @@ public class MainGUI extends JFrame {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Title label
-        JLabel titleLabel = new JLabel("Calorie Services", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Health chatbot", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(titleLabel);
