@@ -25,7 +25,7 @@
     </properties>
 
     <dependencies>
-        <!-- gRPC 의존성 -->
+        <!-- gRPC dependency -->
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
